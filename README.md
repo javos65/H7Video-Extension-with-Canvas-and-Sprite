@@ -16,7 +16,7 @@ Images can be build using the C-Array conversion program for H7.
 (https://github.com/javos65/H7-CArray-Converter-for-USBDisk)
 
 
-![logo](/images/orb2.png.png?raw=true)
+![logo](/images/orb2.png?raw=true)
 
 ### Wiring
 
