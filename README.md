@@ -1,6 +1,6 @@
-## Portenta H7 Video extenstion with Canvas and Sprites
+# Portenta H7 Video extenstion with Canvas and Sprites
 ![logo](/images/orb2.png?raw=true)
-# Extension of the Arduino_H7_Video.h library
+## Extension of the Arduino_H7_Video.h library
 ____
 
 ## About
