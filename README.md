@@ -30,6 +30,7 @@ G_image object also contains the x-y coordinates on the screen.
 *Printf_Canvas()* and *Printf_Sprite()* : printf-function for graphic text in alpha / transparant style.<br>
 Graphic text comes is 3 flavours are the moment : **1** standard 12pt , **2** large 18pt, **3** fat 24pt (number only)
 
+*Sprite_FillRect()* and *Canvas_FillRect()* created rectangualr filling with alpha-channel transparancy
 ___
 
 ### Wiring
