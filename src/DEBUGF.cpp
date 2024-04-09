@@ -25,7 +25,7 @@ void DEBUGFinit(uint32_t baudrate)
 void Debugbuffer_8H(uint8_t* b,int size,int step)
 {
 int t,u;
-DEBUGF(" \n")
+DEBUGF(" \n\r")
 for( t=0 ; t< size ; t=t+step)
     {
     DEBUGF("[%0.8x] ",(uint32_t) ((uint8_t*) b+t) );  
@@ -35,16 +35,16 @@ for( t=0 ; t< size ; t=t+step)
       if(b[t+u]<32 || b[t+u]>127 ){DEBUGF(".");}
       else {DEBUGF("%c",(char) b[t+u]);}
     }
-    DEBUGF("]\n");
+    DEBUGF("]\n\r");
     }
-DEBUGF(" \n")
+DEBUGF(" \n\r")
 }
 
 // Debug function : print buffer in hex and char format //
 void Debugbuffer_8B(uint8_t* b,int size, int step)
 {
 int t,u,v;
-DEBUGF(" \n")
+DEBUGF(" \n\r")
 for( t=0 ; t< size ; t=t+step)
     {
     DEBUGF("[%0.8x] ",(uint32_t) ((uint8_t*) b+t) );  
@@ -57,9 +57,9 @@ for( t=0 ; t< size ; t=t+step)
       if(b[t+u]<32 || b[t+u]>127 ){DEBUGF(".");}
       else {DEBUGF("%c",(char) b[t+u]);}
     }
-    DEBUGF("]\n");
+    DEBUGF("]\n\r");
     }
-DEBUGF(" \n")
+DEBUGF(" \n\r")
 }
 
 // Debug function : print buffer in hex and char format, beware: 32bit numbers are shown Litte Endian style - byte wise reversed vs address//
@@ -67,7 +67,7 @@ void Debugbuffer_32H(uint32_t* b,int size, int step)
 {
 int t,u,v;
 char c;
-DEBUGF(" \n")
+DEBUGF(" \n\r")
 for( t=0 ; t< size ; t=t+step)
     {
     DEBUGF("[%0.8x] ",(uint32_t) ((uint32_t*) b+t) );  // print address in 32 bit step size
@@ -83,9 +83,9 @@ for( t=0 ; t< size ; t=t+step)
             }
         DEBUGF("_");    
     }
-    DEBUGF("]\n");
+    DEBUGF("]\n\r");
     }
-DEBUGF(" \n")
+DEBUGF(" \n\r")
 }
 
 
@@ -94,7 +94,7 @@ void Debugbuffer_16H(uint16_t* b,int size, int step)
 {
 int t,u,v;
 char c;
-DEBUGF(" \n")
+DEBUGF(" \n\r")
 for( t=0 ; t< size ; t=t+step)
     {
     DEBUGF("[%0.8x] ",(uint32_t) ((uint16_t*) b+t) );   // print adress in 16 bit step size
@@ -110,9 +110,9 @@ for( t=0 ; t< size ; t=t+step)
             }
         DEBUGF("_");    
     }
-    DEBUGF("]\n");
+    DEBUGF("]\n\r");
     }
-DEBUGF(" \n")
+DEBUGF(" \n\r")
 }
 
 #endif

@@ -144,13 +144,6 @@ void CanvasAll_Text(const char * txt, uint16_t x, uint16_t y,uint16_t color,uint
 }
 
 
-void Canvas_FillRect(uint16_t x, uint16_t y,uint16_t xw, uint16_t yw,uint16_t rgb565color)
-{
-  if ( ((x+xw) < GENERIC_RESX) || ((y + yw) < GENERIC_RESY) ) {
-    dsi_lcdFillArea( (void *)(RGB565Canvas + x + y*GENERIC_RESX),xw,yw, rgb565to8888(rgb565color) );
-    }
-}
-
 // 8bbp font, capitals only 
 void CanvasAll_Drawtext( bool canvas, const char *text, font4bpp myfont, uint16_t x, uint16_t y,uint16_t color565)
 {
@@ -181,7 +174,7 @@ while( (c=text[cc]) !=0 ){
 
 // Clear Canvas RGB565 frame with one RGB565 color
 void Canvas_ClearFrame(uint16_t rgb565color){
-   CanvasAll_FillBuffer((void *)(RGB565Canvas), GENERIC_RESX, GENERIC_RESY, rgb565to8888(rgb565color),DMA2D_INPUT_RGB565);
+   CanvasAll_FillBuffer((void *)(RGB565Canvas), GENERIC_RESX, GENERIC_RESY, 0, rgb565to8888(rgb565color),DMA2D_OUTPUT_RGB565);
 }
 
 
@@ -247,12 +240,6 @@ void Canvas_DrawImageAlpha(void *pSrc, uint16_t x, uint16_t y,uint32_t xSize, ui
 	}
   }// color mode ok ?
 }
-
-// Clear Sprite Canvas with argb8888 color
-void Sprite_ClearFrame(uint32_t ARGB888color) { 
-     CanvasAll_FillBuffer((void *)(ARGB8888Canvas), SPRITE_RESX,SPRITE_RESY, ARGB888color,DMA2D_INPUT_ARGB8888);
-}
-
 
 
 // DRAW SPRITE CANVAS as ARGB888 color image direct to Current DSI buffer//
@@ -377,12 +364,34 @@ uint32_t color8888 = rgb565to8888( color565);
 
 
 
+void Canvas_FillRect(uint16_t x, uint16_t y,uint16_t xw, uint16_t yw,uint16_t rgb565color,uint8_t alpha)
+{
+  uint32_t *tmpbuffer;
+  if ( ((x+xw) < GENERIC_RESX) || ((y + yw) < GENERIC_RESY) ) {
+     tmpbuffer= (uint32_t*)ea_malloc(xw*yw*4);                                          // alloc temprary memory
+    uint32_t color8888 = rgb565to8888(rgb565color); color8888 = (color8888&0x00ffffff) + ( (uint32_t) alpha<<24);
+    CanvasAll_FillBuffer( (void *)tmpbuffer,xw,yw, 0,color8888,DMA2D_OUTPUT_ARGB8888 );   // create ARGB8888 image with alpha
+    Canvas_DrawImageAlpha( (void *) tmpbuffer, x, y,xw, yw, DMA2D_INPUT_ARGB8888 ) ;   // blend it into the RGB565 canvas
+    ea_free(tmpbuffer);
+    }
+}
+
+
+// Clear Sprite Canvas with argb8888 color
+void Sprite_ClearFrame(uint32_t ARGB888color) { 
+     CanvasAll_FillBuffer((void *)(ARGB8888Canvas), SPRITE_RESX,SPRITE_RESY, 0, ARGB888color,DMA2D_OUTPUT_ARGB8888);
+}
+
 // Fill Screen buffer with one color
-void CanvasAll_FillBuffer(void *pDst, uint32_t xSize, uint32_t ySize, uint32_t ColorIndex,uint32_t ColorMode) {
+void CanvasAll_FillBuffer(void *pDst, uint32_t xSize, uint32_t ySize, uint32_t Offline, uint32_t ColorIndex,uint32_t ColorMode) {
+  #if defined(__CORTEX_M7) 
+	SCB_CleanInvalidateDCache();
+	SCB_InvalidateICache();
+#endif
 	/* Register to memory mode with ARGB8888 as color Mode */
 	dma2d.Init.Mode         = DMA2D_R2M;
 	dma2d.Init.ColorMode    = ColorMode;	//DMA2D_OUTPUT_ARGB8888
-	dma2d.Init.OutputOffset = 0;
+	dma2d.Init.OutputOffset = Offline;
 
 	dma2d.Instance = DMA2D;
 
@@ -397,6 +406,13 @@ void CanvasAll_FillBuffer(void *pDst, uint32_t xSize, uint32_t ySize, uint32_t C
 	}
 }
 
+void Sprite_FillRect(uint16_t x, uint16_t y,uint16_t xw, uint16_t yw,uint16_t rgb565color,uint8_t alpha)
+{
+  if ( ((x+xw) < SPRITE_RESX) || ((y + yw) < SPRITE_RESY) ) {
+    uint32_t color8888 = rgb565to8888(rgb565color); color8888 = (color8888&0x00ffffff) + ( (uint32_t) alpha<<24);
+    CanvasAll_FillBuffer( (void *)(ARGB8888Canvas+ x + y*SPRITE_RESX),xw,yw, SPRITE_RESX-xw,color8888,DMA2D_OUTPUT_ARGB8888 ); // offline size !!
+    }
+}
 
 
 //Wrapper function for G_Image drawing to Sprite

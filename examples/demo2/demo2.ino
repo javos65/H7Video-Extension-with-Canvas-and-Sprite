@@ -51,19 +51,22 @@ Canvas_DrawImage(shadow4);    // Draw transparant picture : Sprite, formatted as
 
   tt=millis();
   int r=690;
-  Printf_Canvas(3,49,BLACK,1,"RGB565 image"); // print text on Canvas buffer
+  Printf_Canvas(3,49,BLACK,1,"RGB565 image");   // print text on Canvas buffer
   Printf_Canvas(3,164,BLACK,1,"XRGB155 image"); // print text on Canvas buffer
-  Printf_Canvas(3,279,BLACK,1,"X4444 image"); // print text on Canvas buffer
+  Printf_Canvas(3,279,BLACK,1,"X4444 image");   // print text on Canvas buffer
 
-  Printf_Canvas(2,48,ORANGE,1,"RGB565 image"); // print text on Canvas buffer
+  Printf_Canvas(2,48,ORANGE,1,"RGB565 image");   // print text on Canvas buffer
   Printf_Canvas(2,163,YELLOW,1,"XRGB155 image"); // print text on Canvas buffer
-  Printf_Canvas(2,278,CYAN,1,"X4444 image"); // print text on Canvas buffer
+  Printf_Canvas(2,278,CYAN,1,"X4444 image");     // print text on Canvas buffer
 
   Printf_Canvas(10,10,CYAN,2,"RGB656 Canvas %ix%i - %iKB",Canvas_width(),Canvas_height(),r); // print large text on Canvas buffer 
-  Printf_Canvas(Sprite_x()+10,Sprite_y()+10,ORANGE,1,"ARGB8888 Sprite Area %ix%i",Sprite_width(),Sprite_height()); // print text on Canvas buffer
-  Canvas_FillRect(700,80,10,300,RED);
-  Canvas_FillRect(105,30,5,420,MAGENTA);
-  Canvas_FillRect(20,455,650,20,WHITE);
+  Printf_Canvas(Sprite_x()+10,Sprite_y()+10,DARKCYAN,1,"ARGB8888 Sprite Area %ix%i",Sprite_width(),Sprite_height()); // print text on Canvas buffer
+  Canvas_FillRect(700,100,10,300,RED,0x40);      // 75% transparant
+  Canvas_FillRect(680,100,10,300,RED,0x70);      // 50% transparant
+  Canvas_FillRect(660,100,10,300,RED,0xA0);      // 66% transparant
+  Canvas_FillRect(640,100,10,300,RED,0xD0);      // 86% transparant
+  Canvas_FillRect(110,30,5,420,MAGENTA, 0xFF);  // full opaque
+  Canvas_FillRect(20,455,650,20,WHITE,0x80);    // 50% transparant
   Printf_Canvas(40,460,RED,1,"Dram starts at = %x",(uint32_t) RGB565Canvas); // print large text on Canvas buffer 
   tt=millis()-tt;  DEBUGF("*Test 3 : Canvas Text and Rect in %dms\n\r",tt);
   CanvasAll_DrawFrames(true);delay(1000);
@@ -123,8 +126,10 @@ while(1) {
         cc++;
       } 
 
-      Sprite_ClearFrame(0x00000000); // fill buffer transparant nothing
-      
+      // build up sprite Area :
+      Sprite_ClearFrame(0x20000000); // fill buffer transparant slightly dimmed
+      Sprite_FillRect(460,10,10,300,RED,0x60);      // 40% transparant bar
+      Sprite_FillRect(460,10,10,300-(cc%300),LIGHTGRAY,0x60);      // 40% transparant bar
       if(yp >= (boundry-160) && yp< (boundry-40) )  { shadow4.xpos = xp+correction;Sprite_DrawImage(shadow4);   }      
       if(yp >= (boundry-40) && yp< (boundry-20) )  { shadow3.xpos = xp+correction;Sprite_DrawImage(shadow3);   }
       if(yp >= (boundry-20) && yp< (boundry-5) )  { shadow2.xpos = xp+correction;Sprite_DrawImage(shadow2);   }
@@ -137,11 +142,12 @@ while(1) {
       if(yp2 >= (boundry-5) ) { shadow1.xpos = xp+correction;Sprite_DrawImage(shadow1);   }
       Sprite_DrawImage(orb2);       // Draw SpriteImage on Sprite Canvas 8888      
 
-      Printf_Sprite(10,Sprite_height()-25,RED,3,"%i:%i:%i",millis()-tt,cc,millis());            // print text on Sprite Canvas
+      Printf_Sprite(10,Sprite_height()-25,RED,3,"%i:%i",millis()-tt,cc);            // print text on Sprite Canvas
+      Printf_Sprite(Sprite_width()-120,Sprite_height()-25,WHITE,3,"%i",millis());      // print text on Sprite Canvas
       tt=millis();
-      CanvasAll_DrawFrames(true);                                                // Draw Canvas and Sprite Canvas to DSI
+      CanvasAll_DrawFrames(true);                                                   // Draw Canvas and Sprite Canvas to DSI
       }
-      DEBUGF(" Average Speed %ius\n\r", (micros()-tx)/240);
+      //DEBUGF(" Average Speed %ius\n\r", (micros()-tx)/240);
     
   } // forever
 } //loop
