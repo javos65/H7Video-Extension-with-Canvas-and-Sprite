@@ -17,8 +17,8 @@ Images can be build using the C-Array conversion program for H7.
 
 ### Functions added
 
-*CanvasAll_Init()* : initialises video with Canvas and Sprite Area. currently not dybnamic, but adaptable in the .h setup/
-*CanvasAll_DrawFrames()* : draws all frames - Canvas + transparant Sprite to the current DSI video buffer, and sends buffer for display/
+*CanvasAll_Init()* : initialises video with Canvas and Sprite Area. currently not dybnamic, but adaptable in the .h setup\
+*CanvasAll_DrawFrames()* : draws all frames - Canvas + transparant Sprite to the current DSI video buffer, and sends buffer for display\
 
 *Canvas_DrawImage(G_image imagename)* : draw G_image to Canvas-buffer
 *Sprite_DrawImage(G_image imagename)* : draw G_image to Sprite-buffer
