@@ -17,18 +17,18 @@ Images can be build using the C-Array conversion program for H7.<br>
 
 ### Functions added
 
-*CanvasAll_Init()* : initialises video with Canvas and Sprite Area. currently not dybnamic, but adaptable in the .h setup<br>
+*CanvasAll_Init()* : initialises video with Canvas and Sprite Area. currently not dynamic, but adaptable in the .h setup<br>
 *CanvasAll_DrawFrames()* : draws all frames - Canvas + transparant Sprite to the current DSI video buffer, and sends buffer for display
 
 *Canvas_DrawImage(G_image imagename)* : draw G_image to Canvas-buffer<br>
 *Sprite_DrawImage(G_image imagename)* : draw G_image to Sprite-buffer
 
 **G_image** is an image C-structure object that contains the image data like pixel-type, size and the pointer to the image data.
-This simplifies the image-draww calls in your program, it supporta alpha images (like PNG) in ARGB8888 ARGB1555 ARGB4444.<br>
+This simplifies the image-draw calls in your program, it supports alpha images (like PNG) in ARGB8888 ARGB1555 ARGB4444.<br>
 G_image object also contains the x-y coordinates on the screen.
 
 *Printf_Canvas()* and *Printf_Sprite()* : printf-function for graphic text in alpha / transparant style.<br>
-Graphic text comes is 3 flavours are the moment : **1** standard 12pt , **2** large 18pt, **3** fat 24pt (number only)
+Graphic text comes in 3 flavours are the moment : **1** standard 12pt , **2** large 18pt, **3** fat 24pt (number only)
 
 *Sprite_FillRect()* and *Canvas_FillRect()* created rectangualr filling with alpha-channel transparancy
 ___
