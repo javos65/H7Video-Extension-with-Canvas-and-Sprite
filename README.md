@@ -24,13 +24,13 @@ Images can be build using the C-Array conversion program for H7.
 *Sprite_DrawImage(G_image imagename)* : draw G_image to Sprite-buffer
 
 **G_image** is an image C-structure object that contains the image data like pixel-type, size and the pointer to the image data.
-This simplifies the image-draww calls in your program, it supporta alpha images (like PNG) in ARGB8888 ARGB1555 ARGB4444.
+This simplifies the image-draww calls in your program, it supporta alpha images (like PNG) in ARGB8888 ARGB1555 ARGB4444.<br>
 G_image object also contains the x-y coordinates on the screen.
 
-*Printf_Canvas()* and *Printf_Sprite()* : printf-function for graphic text in alpha / transparant style.
-Graphic text comes is 3 flavours are the moment : 1 standard 12pt , 2 large 18pt, 3 fat 24pt (number only)
+*Printf_Canvas()* and *Printf_Sprite()* : printf-function for graphic text in alpha / transparant style.<br>
+Graphic text comes is 3 flavours are the moment : **1** standard 12pt , **2** large 18pt, **3** fat 24pt (number only)
 
-
+___
 
 ### Wiring
 
@@ -48,11 +48,11 @@ ___
 + Support 16 bit RGB565 ARGB1555 ARGB4444  / 32 bit ARGB8888
 + Add transparant A4-pixel font usage as a printf-function
 
-
 ___
 
 ## To do:
 + Make the Canvas a Callable Class
++ Add a smaller font - 9pt
 + Add transparant drawing features
 
 ___
