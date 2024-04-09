@@ -10,7 +10,7 @@ This library adds a background Canvas, with on top a transparant Sprite Area in 
 
 This code was made by using Portenta H7 (and HAT expansion board) supporting HDMI over USB-C
 All video functions using a special 2D DMA function (DMA2D) to transfer. The video buffers require part of the SDRAM use of the Portenta H7.
-Images can be build using the C-Array conversion program for H7.
+Images can be build using the C-Array conversion program for H7.<br>
 (https://github.com/javos65/H7-CArray-Converter-for-USBDisk)
 
 ![logo](/images/orb1.png?raw=true)
