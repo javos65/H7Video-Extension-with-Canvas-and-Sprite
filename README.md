@@ -17,10 +17,10 @@ Images can be build using the C-Array conversion program for H7.
 
 ### Functions added
 
-*CanvasAll_Init()* : initialises video with Canvas and Sprite Area. currently not dybnamic, but adaptable in the .h setup\n
-*CanvasAll_DrawFrames()* : draws all frames - Canvas + transparant Sprite to the current DSI video buffer, and sends buffer for display\n
+*CanvasAll_Init()* : initialises video with Canvas and Sprite Area. currently not dybnamic, but adaptable in the .h setup<br>
+*CanvasAll_DrawFrames()* : draws all frames - Canvas + transparant Sprite to the current DSI video buffer, and sends buffer for display
 
-*Canvas_DrawImage(G_image imagename)* : draw G_image to Canvas-buffer
+*Canvas_DrawImage(G_image imagename)* : draw G_image to Canvas-buffer<br>
 *Sprite_DrawImage(G_image imagename)* : draw G_image to Sprite-buffer
 
 **G_image** is an image C-structure object that contains the image data like pixel-type, size and the pointer to the image data.
