@@ -21,7 +21,8 @@ Images can be build using the C-Array conversion program for H7.<br>
 *CanvasAll_DrawFrames()* : draws all frames - Canvas + transparant Sprite to the current DSI video buffer, and sends buffer for display
 
 *Canvas_DrawImage(G_image imagename)* : draw G_image to Canvas-buffer<br>
-*Sprite_DrawImage(G_image imagename)* : draw G_image to Sprite-buffer
+*Sprite_DrawImage(G_image imagename)* : draw G_image to Sprite-buffer<br>
+*Canvas_DrawImageR(G_image imagename,x,y)* : draw G_image **RESIZED** to Canvas-buffer<br>
 
 **G_image** is an image C-structure object that contains the image data like pixel-type, size and the pointer to the image data.
 This simplifies the image-draw calls in your program, it supports alpha images (like PNG) in ARGB8888 ARGB1555 ARGB4444.<br>
