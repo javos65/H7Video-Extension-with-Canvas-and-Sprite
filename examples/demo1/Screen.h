@@ -36,12 +36,13 @@ extern G_image Invaders1_1;
 extern G_image Invaders2_1;
 extern G_image Invaders3_1;
 extern G_image Invaders4_1;
+extern G_image Splash;
 
 extern const uint16_t Bomb_array[BOMB_Y][BOMB_X];
 extern const uint16_t Invaders1_1_array[INVADER_Y][INVADER_X];
 extern const uint16_t Invaders2_1_array[INVADER_Y][INVADER_X];
 extern const uint16_t Invaders3_1_array[INVADER_Y][INVADER_X];
 extern const uint16_t Invaders4_1_array[INVADER_Y][INVADER_X];
-extern const uint16_t Splash[SPLASHY][SPLASHX]; 
+extern const uint16_t Splash_array[SPLASHY][SPLASHX]; 
 
 #endif  SCREEN_H

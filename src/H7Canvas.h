@@ -16,14 +16,14 @@ uint16_t ypos;     // y position
 char name[24];     // name in text
 } G_image;         // end structure
 
-#define GENERIC_RESX 720  // VIDEO SCREEN SIZE = CANVAS SIZE
-#define GENERIC_RESY 480
+#define GENERIC_RESX 800  // VIDEO SCREEN SIZE = CANVAS SIZE
+#define GENERIC_RESY 600
 
-#define SPRITE_RESX 480   // SPRITE AREA - Game size
-#define SPRITE_RESY 320
+#define SPRITE_RESX 560   // SPRITE AREA - Game size
+#define SPRITE_RESY 420
 
-#define SPRITE_SX 120     // Start Sprite area on Canvas upper left corner
-#define SPRITE_SY 80
+#define SPRITE_SX 200     // Start Sprite area on Canvas upper left corner
+#define SPRITE_SY 100
 
 // 565 colors
 #define CLEAR     0x0005
@@ -43,6 +43,8 @@ char name[24];     // name in text
 #define LIGHTGRAY 0xe73c
 #define GRAY      0x8c51
 
+#define BLACK8888 0x00000000
+#define ERASEMASK 0x40
 extern uint32_t* ARGB8888Canvas;
 extern uint16_t* RGB565Canvas;
 
@@ -79,11 +81,14 @@ void Sprite_ClearFrame(uint32_t ARGB888color);
 void Sprite_DrawImage( G_image spriteimage);
 void Sprite_FillRect(uint16_t x, uint16_t y,uint16_t xw, uint16_t yw, uint16_t rgb565color,uint8_t alpha);
 // internal
-void Sprite_DrawImage565( void* sprite, uint16_t x, uint16_t y,uint32_t xSize, uint32_t ySize); // non alpha
+void Sprite_DrawImage565(void *image,uint16_t x, uint16_t y, uint16_t xw, uint16_t  yw);
 void Sprite_DrawImageAlpha( void* sprite, uint16_t x, uint16_t y,uint32_t xSize, uint32_t ySize,uint32_t colormode);
 void Sprite_DrawFont(void *pSrc, uint16_t x, uint16_t y,uint32_t xSize, uint32_t ySize, uint32_t fontmode, uint16_t color565);
 
+void Canvas_DrawImageR(G_image spriteimage,uint16_t rx,uint16_t ry);
 
+uint32_t rgb565to8888(uint16_t rgb565Pixel);
+uint16_t argb8888to565(uint32_t argb8888Pixel);
  
 
 

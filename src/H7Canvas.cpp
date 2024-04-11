@@ -154,6 +154,7 @@ uint16_t *findex = (uint16_t*) myfont.fontindex;
 uint16_t charcursor=0; 
 
 cc=0;
+//DEBUGF("Printing [%s]\n\r",text);
 while( (c=text[cc]) !=0 ){
  if(c>myfont.last) c=c-32; // change small to large ascii
  if ( (c>=myfont.first) && (c<=myfont.last)){
@@ -162,7 +163,7 @@ while( (c=text[cc]) !=0 ){
       //DEBUGF(" *Char [%c] w*h=%d*%d",c,width,height);
       if (width%2) {width+=1; bytew=width/2; wcomp=1;} // odd pixels, stored 1x 4bpp more, compensate cursor move.
       else { bytew=width/2;wcomp=0;}
-      //DEBUGF(" * Character: %c points to index %d",c,ip); 
+      //DEBUGF(" * Character: %c points to index %d\n\r",c,ip); 
       if (canvas) Canvas_DrawFont( (void *) (fmap + ip),(uint16_t) x+charcursor,(uint16_t) y,(uint32_t) width, (uint32_t) height, (uint32_t) DMA2D_INPUT_A4,color565) ;
       else Sprite_DrawFont( (void *) (fmap + ip),(uint16_t) x+charcursor,(uint16_t) y,(uint32_t) width, (uint32_t) height, (uint32_t) DMA2D_INPUT_A4, color565) ;
       charcursor+= (width-wcomp);
@@ -207,9 +208,9 @@ void Canvas_DrawImageAlpha(void *pSrc, uint16_t x, uint16_t y,uint32_t xSize, ui
 	SCB_InvalidateICache();
 #endif
   if ( (colormode != DMA2D_INPUT_ARGB8888) && (colormode != DMA2D_INPUT_ARGB4444) && (colormode !=DMA2D_INPUT_ARGB1555) )
-  {
-  DEBUGF("Not supported Color mode for Alpha blend to RGB565 by DMA2D %0.8x",colormode);;
-  }
+  { DEBUGF("Not supported Color mode for Alpha blend to RGB565 by DMA2D %0.8x",colormode);; }
+  else  if( (x+xSize)>Canvas_width() || (y+ySize)> Canvas_height())
+    { DEBUGF(" * Image outside Canvas Frame");;  }
   else
   {
 	uint16_t *pDst = (uint16_t*) (RGB565Canvas + x + y*GENERIC_RESX); // calculate destination location on Canvas
@@ -284,8 +285,10 @@ void Canvas_DrawFont(void *pSrc, uint16_t x, uint16_t y,uint32_t xSize, uint32_t
 	SCB_CleanInvalidateDCache();
 	SCB_InvalidateICache();
 #endif
-	
-
+if( (x+xSize)>Canvas_width() || (y+ySize)> Canvas_height())
+    { DEBUGF(" * Font outside Canvas Frame");;  }
+else
+{
 uint32_t color8888 =  rgb565to8888(color565);
 uint16_t *pDst = (uint16_t*) (RGB565Canvas + x + y*GENERIC_RESX); // calculate destination location on Canvas
   dma2d.Instance = DMA2D;
@@ -318,6 +321,7 @@ uint16_t *pDst = (uint16_t*) (RGB565Canvas + x + y*GENERIC_RESX); // calculate d
 			}
 		}
 	}
+  } // check size
 }
 
 
@@ -327,7 +331,10 @@ void Sprite_DrawFont(void *pSrc, uint16_t x, uint16_t y,uint32_t xSize, uint32_t
 	SCB_CleanInvalidateDCache();
 	SCB_InvalidateICache();
 #endif
-	
+if( (x+xSize)>Sprite_width() || (y+ySize)> Sprite_height())
+    { DEBUGF(" * Font outside Sprite Frame");;  }
+else
+{	
 uint16_t *pDst = (uint16_t*) (ARGB8888Canvas + x + y*SPRITE_RESX); // calculate destination location on Canvas
 uint32_t color8888 = rgb565to8888( color565);
   dma2d.Instance = DMA2D;
@@ -360,6 +367,7 @@ uint32_t color8888 = rgb565to8888( color565);
 			}
 		}
 	}
+} // check size
 }
 
 
@@ -422,9 +430,47 @@ switch( spriteimage.colormode) {
     case DMA2D_INPUT_ARGB8888 : Sprite_DrawImageAlpha( spriteimage.imagearray, spriteimage.xpos,spriteimage.ypos,spriteimage.width, spriteimage.height,spriteimage.colormode);break;
     case DMA2D_INPUT_ARGB4444 : Sprite_DrawImageAlpha( spriteimage.imagearray, spriteimage.xpos,spriteimage.ypos,spriteimage.width, spriteimage.height,spriteimage.colormode);break;
     case DMA2D_INPUT_ARGB1555 : Sprite_DrawImageAlpha( spriteimage.imagearray, spriteimage.xpos,spriteimage.ypos,spriteimage.width, spriteimage.height,spriteimage.colormode);break;
+    case DMA2D_INPUT_RGB565   : Sprite_DrawImage565(   spriteimage.imagearray, spriteimage.xpos,spriteimage.ypos,spriteimage.width, spriteimage.height);break;
     default : break;
     }
 }
+
+
+// DRAW IMAGE WITH OPAQUE RGB565 color image  to ARGB8888Canvas by copying//
+void Sprite_DrawImage565(void *image,uint16_t x, uint16_t y, uint16_t xw, uint16_t  yw)
+{
+#if defined(__CORTEX_M7) 
+	SCB_CleanInvalidateDCache();
+	SCB_InvalidateICache();
+#endif
+  if( (x+xw)>Sprite_width() || (y+yw)> Sprite_height())
+    { DEBUGF(" * Image outside Sprite Frame");;  }
+ else {
+  uint32_t *pDst = (uint32_t*) (ARGB8888Canvas + x + y*SPRITE_RESX); // calculate destination location on DSI
+	dma2d.Instance = DMA2D;
+	/* Configure the DMA2D Mode, Color Mode and output offset */
+	dma2d.Init.Mode         = DMA2D_M2M_PFC;
+	dma2d.Init.ColorMode    = DMA2D_OUTPUT_ARGB8888;
+	dma2d.Init.OutputOffset = SPRITE_RESX - xw;
+	/* Foreground Configuration */
+	dma2d.LayerCfg[1].AlphaMode = DMA2D_REPLACE_ALPHA;
+	dma2d.LayerCfg[1].InputAlpha = 0xFF;
+	dma2d.LayerCfg[1].InputColorMode = DMA2D_INPUT_RGB565;
+	dma2d.LayerCfg[1].InputOffset = 0;
+
+	/* DMA2D Initialization */
+	if(HAL_DMA2D_Init(&dma2d) == HAL_OK) {
+		if(HAL_DMA2D_ConfigLayer(&dma2d, 1) == HAL_OK) {
+			if (HAL_DMA2D_Start(&dma2d, (uint32_t) image, (uint32_t)pDst, xw, yw) == HAL_OK) {
+				/* Polling For DMA transfer */
+				HAL_DMA2D_PollForTransfer(&dma2d, 25);
+			}
+		}
+	}
+ } // check size
+}
+
+
 
 // DRAW IMAGE WITH ALPHA CHANNEL ARG1555/4444/8888 color image to SPRITE CANVAS//
 void Sprite_DrawImageAlpha( void* sprite, uint16_t x, uint16_t y,uint32_t xSize, uint32_t ySize,uint32_t colormode) { 
@@ -433,11 +479,12 @@ void Sprite_DrawImageAlpha( void* sprite, uint16_t x, uint16_t y,uint32_t xSize,
 	SCB_InvalidateICache();
 #endif
   if ( (colormode != DMA2D_INPUT_ARGB8888) && (colormode != DMA2D_INPUT_ARGB4444) && (colormode !=DMA2D_INPUT_ARGB1555) )
-  {
-  DEBUGF("Not supported Color mode for Alpha blend to ARGB888 by DMA2D %0.8x",colormode);;
-  }
+  { DEBUGF(" * Not supported Color mode for Alpha blend to ARGB888 by DMA2D %0.8x",colormode);;  }
+  else if( (x+xSize)>Sprite_width() || (y+ySize)> Sprite_height())
+    { DEBUGF(" * Image outside Sprite Frame");;  }
   else
   {
+
   uint32_t *pDst = (uint32_t*) (ARGB8888Canvas + x + y*SPRITE_RESX); // calculate destination location on DSI
   dma2d.Instance = DMA2D;
 	/* Configure the DMA2D Mode, Color Mode and output offset */
@@ -466,4 +513,27 @@ void Sprite_DrawImageAlpha( void* sprite, uint16_t x, uint16_t y,uint32_t xSize,
   } // right color mode?
 }
 
+void Canvas_DrawImageR(G_image spriteimage,uint16_t rx,uint16_t ry)
+{
+G_image Timage;
+uint32_t t,orgx = spriteimage.width;
+uint32_t u,orgy = spriteimage.height;
+//uint32_t * Dst = (uint32_t*) (ARGB8888Canvas + spriteimage.x + spriteimage.y*Sprite_width() ); // destination point
+
+if(spriteimage.bpp == 16){
+    uint16_t *TDst16 = (uint16_t*) ea_malloc(rx*ry*spriteimage.bpp/8);
+DEBUGF(" * Tmp-Image size %dx%d starting at %0.8x",rx,ry,(uint32_t) TDst16);
+    for ( t=0;t<ry;++t)
+      for( u=0;u<rx;++u)
+      {
+        *( (uint16_t *) TDst16 + t*rx + u) = *( (uint16_t *) spriteimage.imagearray + ((t*orgy)/ry)*orgx + (u*orgx)/rx);
+      }
+   Timage.width=rx;Timage.height=ry;  Timage.bpp=spriteimage.bpp; Timage.xpos=spriteimage.xpos; Timage.ypos=spriteimage.ypos;
+   Timage.imagearray = (void*) TDst16; Timage.colormode = spriteimage.colormode;
+   Canvas_DrawImage(Timage);
+   ea_free(TDst16);
+   }
+
+
+}
 
